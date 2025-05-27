@@ -1,58 +1,86 @@
-import { capitalize } from "@mui/material";
-// import { useNavigate } from "react-router-dom";
-// import { useLogout } from "../hooks/user";
+import React from 'react';
+import { AppBar, Toolbar, Typography, IconButton, Avatar, Menu, MenuItem, Box } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import { useState } from 'react';
 
-export default function Header({user}){
- 
-  // console.log(user)
-  // let navigate = useNavigate();
-
-  // const logoutAccount = useLogout();
-  // const handleLogout = async () => {
-  //     const is_logged_out = await logoutAccount();
-  //     is_logged_out && navigate(`/account/login`);
-  // }
-    return <>
-<nav className="main-header navbar navbar-expand navbar-dark">
-  <ul className="navbar-nav">
-  <li class="nav-item">
-        <a class="nav-link" data-widget="pushmenu" role="button"><i class="fas fa-bars"></i></a>
-      </li>
-  </ul>
-  {/* Right navbar links */}
-  <ul className="navbar-nav ml-auto">
-    {/* Navbar Search */}
-    
+export default function Header({ user }) {
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
   
-    <li className="nav-item">
-      <a className="nav-link" data-widget="fullscreen" href="#" role="button">
-        <i className="fas fa-expand-arrows-alt" />
-      </a>
-    </li>
-    <li className="nav-item">
-    <div className="am-header-right">
-                <div className="dropdown dropdown-profile">
-                    <a href="/" className="nav-link nav-link-profile" data-toggle="dropdown">
-                        <img src="/assets/img/img12.jpg" className="wd-32 rounded-circle" alt="img" />
-                        {/* <span className="logged-name"><span className="hidden-xs-down">{capitalize(user.name)}</span> <i className="fa fa-angle-down mg-l-3"></i></span> */}
-                        <span className="logged-name"><span className="hidden-xs-down">Abhinav</span> <i className="fa fa-angle-down mg-l-3"></i></span>
-                    </a>
-                    <div className="dropdown-menu wd-200">
-                        <ul className="list-unstyled user-profile-nav">
-                            <li><a style={{color:"white",cursor:"pointer"}}><i className="icon ion-ios-person-outline"></i> Edit Profile</a></li>
-                            <li style={{color:"white",cursor:"pointer"}}><a ><i className="icon ion-power"></i> Sign Out</a></li>
-                            {/* <li style={{color:"white",cursor:"pointer"}}><a onClick={handleLogout}><i className="icon ion-power"></i> Sign Out</a></li> */}
-                        </ul>
-                    </div>
-                </div>
-            </div>
-    </li>
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
-
-
-  </ul>
-</nav>
-
-
-    </>
+  return (
+    <AppBar position="static" color="primary" elevation={0}>
+      <Toolbar>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+          data-widget="pushmenu"
+        >
+          <MenuIcon />
+        </IconButton>
+        
+        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+          ID Card Management
+        </Typography>
+        
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <IconButton color="inherit" data-widget="fullscreen">
+            <FullscreenIcon />
+          </IconButton>
+          
+          <IconButton
+            onClick={handleClick}
+            size="small"
+            sx={{ ml: 2 }}
+            aria-controls={open ? 'account-menu' : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? 'true' : undefined}
+          >
+            <Avatar sx={{ width: 32, height: 32 }} src="/assets/img/img12.jpg" />
+          </IconButton>
+        </Box>
+        
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiAvatar-root': {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+          anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+        >
+          <MenuItem onClick={handleClose}>
+            <Avatar /> Profile
+          </MenuItem>
+          <MenuItem onClick={handleClose}>
+            <Avatar /> Sign Out
+          </MenuItem>
+        </Menu>
+      </Toolbar>
+    </AppBar>
+  );
 }

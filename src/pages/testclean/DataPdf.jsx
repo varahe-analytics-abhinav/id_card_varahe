@@ -8,7 +8,7 @@ import { API_HOST_URL } from "../../config"; // Import API_HOST_URL
 import Loader from "../../components/Loader/index"; // Import Loader
 
 const DataPff = () => {
-  const [state, setState] = useState([]); // This state seems unused based on the original code, keeping it for now.
+  const [state, setState] = useState([]); 
   const [pdfuser, setPdfuser] = useState([]); // State to hold the fetched/cached PDF user data
   const [pdfuserIsLoading, setPdfuserIsLoading] = useState(true); // State to track loading status
   const licenceCertificateref = useRef();
@@ -26,9 +26,7 @@ const DataPff = () => {
         const parsedItems = JSON.parse(cachedItems);
         setPdfuser(parsedItems);
         setPdfuserIsLoading(false);
-        // Optionally, you might still want to fetch in the background to get the latest data
-        // and update cache for next time, but for now, we'll just use cached data.
-        // fetch(`${API_HOST_URL}/get-all-items`).then(res => res.json()).then(data => localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))).catch(console.error);
+       
         return; // Use cached data and exit
       }
 
@@ -44,6 +42,7 @@ const DataPff = () => {
 
       setPdfuser(data.data);
       setPdfuserIsLoading(false);
+      
     } catch (error) {
       console.error("Error fetching PDF items:", error);
       setPdfuserIsLoading(false);
@@ -61,7 +60,7 @@ const DataPff = () => {
   // This should be done after pdfuser is potentially updated by the effect
   const currentUser = Array.isArray(pdfuser) ? pdfuser.find(user => user["Employee Code"] === id) : undefined;
 
-
+  console.log(currentUser)
   useEffect(() => {
     // Filter the pdfuser array to find the correct user by Employee Code
     // Ensure pdfuser is an array before filtering
@@ -122,18 +121,28 @@ const DataPff = () => {
         {currentUser ? (
           <div ref={licenceCertificateref}>
             <div className="cardtwo">
-            <div className="imgPdf">
-  <img
-    src={
-      currentUser["Image Link"]
-        ? `https://lh3.googleusercontent.com/d/${getImageId(currentUser["Image Link"])}`
-        : "https://via.placeholder.com/100x80?text=No+Image"
-    }
-    alt="Employee"
-    width="100px"
-    height="80px"
-  />
-</div>
+              <div className="imgPdf">
+                <img
+                  style={{ borderRadius: '8px', objectFit: 'cover' }}
+                  src={currentUser["Image Link"] 
+                    ? currentUser["Image Link"] // Use the original link directly
+                    : "https://via.placeholder.com/100x80?text=No+Image"}
+                  alt="Employee"
+                  width="100px"
+                  height="80px"
+                  onError={(e) => {
+                    console.log("Image failed to load, trying alternative method");
+                    // If the direct link fails, try the ID method as fallback
+                    const imageId = getImageId(currentUser["Image Link"]);
+                    if (imageId) {
+                      // Use higher quality parameters
+                      e.target.src = `https://drive.google.com/thumbnail?id=${imageId}&sz=w400-h320`;
+                    } else {
+                      e.target.src = "https://via.placeholder.com/100x80?text=Error";
+                    }
+                  }}
+                />
+              </div>
               <div className="namePdf">
                 <h1
                   style={{

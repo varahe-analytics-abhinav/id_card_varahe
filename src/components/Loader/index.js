@@ -1,16 +1,24 @@
 import * as React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
-import Stack from '@mui/material/Stack';
+import { Typography } from '@mui/material';
 
 export default function Loader() {
     return (
-        <div className='container d-flex align-items-center justify-content-center mt-5'>
-            <Stack direction="row">
-                <Box sx={{ width: '100%', display: 'flex', alignItems: 'center', alignContent: 'center', mt:10, mb:10 }}>
-                    <CircularProgress />
-                </Box>
-            </Stack>
-        </div>
+        <Box 
+            sx={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                height: '50vh',
+                gap: 2
+            }}
+        >
+            <CircularProgress size={60} thickness={4} />
+            <Typography variant="body1" color="text.secondary">
+                Loading data...
+            </Typography>
+        </Box>
     );
 }

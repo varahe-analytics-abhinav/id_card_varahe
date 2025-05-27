@@ -3,9 +3,26 @@ import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom";
 import FilterComponent from "../Common/FilterComponent";
 import Loader from "../Loader/index";
-import { API_HOST_URL } from "../../config"; // Import API_HOST_URL
+import { API_HOST_URL } from "../../config";
 import { toast } from "react-toastify";
-// import { useReactToPrint } from "react-to-print";
+import { 
+  Card, 
+  CardContent, 
+  Typography, 
+  Button, 
+  TextField, 
+  Box, 
+  Paper, 
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Chip
+} from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 const DemoList = () => {
   const [pdfuser, setPdfuser] = useState([]); // Initialize pdfuser as an empty array
@@ -27,8 +44,6 @@ const DemoList = () => {
         setPdfuser(JSON.parse(cachedItems));
         setPdfuserIsLoading(false);
         // Optionally, you might still want to fetch in the background to get the latest data
-        // and update cache for next time, but for now, we'll just use cached data.
-        // fetch(`${API_HOST_URL}/get-all-items`).then(res => res.json()).then(data => localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data))).catch(console.error);
         return; // Use cached data and exit
       }
 
@@ -146,17 +161,46 @@ const DemoList = () => {
   }, [filterText, resetPaginationToggle]);
   // console.log(blogData ? blogData: "")
 
+  // Custom styles for DataTable
+  const customStyles = {
+    header: {
+      style: {
+        minHeight: '56px',
+        padding: '16px',
+      },
+    },
+    headRow: {
+      style: {
+        borderTopStyle: 'solid',
+        borderTopWidth: '1px',
+        borderTopColor: '#e0e0e0',
+        backgroundColor: '#f5f5f5',
+      },
+    },
+    headCells: {
+      style: {
+        fontSize: '14px',
+        fontWeight: 600,
+        padding: '16px',
+      },
+    },
+    cells: {
+      style: {
+        padding: '16px',
+      },
+    },
+  };
+
   const columns = [
-    {
+        {
       name: "Image",
       selector: (row) => (
         <div>
           <img
+            style={{ borderRadius: '8px', objectFit: 'cover' }}
             src={row["Image Link"].match(/(?:id=|\/d\/)([^\/?]+)/)?.[1]
-              ? `https://drive.google.com/thumbnail?id=${
-                  row["Image Link"].match(/(?:id=|\/d\/)([^\/?]+)/)?.[1]
-                }`
-              : "https://via.placeholder.com/100"} // Placeholder if ID extraction fails
+              ? `https://drive.google.com/thumbnail?id=${row["Image Link"].match(/(?:id=|\/d\/)([^\/?]+)/)?.[1]}`
+              : "https://via.placeholder.com/100"}
             alt="Employee"
             width="100px"
             height="80px"
@@ -188,106 +232,170 @@ const DemoList = () => {
     {
       name: "Blood Group",
       selector: (row) => row["Blood Group"],
+      cell: (row) => <Chip label={row["Blood Group"]} color="primary" size="small" />,
       sortable: true,
     },
     {
-      name: "Make pdf",
+      name: "Make PDF",
       selector: (row) => (
-        <Link
+        <Button
+          component={Link}
           to={`/view-pdf/${row["Employee Code"]}`}
-          className="btn btn-primary"
+          variant="contained"
+          color="primary"
+          startIcon={<PictureAsPdfIcon />}
+          size="small"
         >
-          pdf
-        </Link>
+          View PDF
+        </Button>
       ),
     },
   ];
 
+  // Password dialog state
+  const [openDialog, setOpenDialog] = useState(false);
 
-  if (false) {
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const handlePasswordSubmitDialog = () => {
+    handlePasswordSubmit();
+    if (password === REQUIRED_PASSWORD) {
+      handleCloseDialog();
+    }
+  };
+
+  if (pdfuserIsLoading) {
     return <Loader />;
   }
 
   return (
-    <>
-      {/* <ViewBlogModel
-            id="exampleModalview2"
-
-            role="dialog"
-            aria-labelledby="exampleModalLabel"
-            aria-hidden="true"
-            blog={blog}
-          /> */}
-      <div className="container" style={{ padding: "20px" }}>
-        {/* Password Input Section */}
-        {!passwordCorrect && (
-          <div className="mb-4">
-            <h3 className="text-xl font-bold mb-2">Enter Password to Upload CSV</h3>
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              className="mr-2 p-2 border rounded"
-              placeholder="Enter password"
-            />
-            <button
-              onClick={handlePasswordSubmit}
-              className="btn btn-primary"
-            >
-              Submit Password
-            </button>
-            {uploadMessage && <p className="mt-2 text-sm text-red-500">{uploadMessage}</p>}
-          </div>
-        )}
-
-        {/* Add CSV Upload Section (Conditionally rendered) */}
-        {passwordCorrect && (
-          <div className="mb-4">
-            <h3 className="text-xl font-bold mb-2">Upload CSV</h3>
-            <input
-              type="file"
-              accept=".csv"
-              onChange={handleFileChange}
-              className="mr-2"
-            />
-            <button
-              onClick={handleUpload}
-              disabled={!selectedFile || uploading}
-              className={`btn ${selectedFile && !uploading ? 'btn-primary' : 'btn-secondary'}`}
-            >
-              {uploading ? 'Submiting...' : 'Submit'}
-            </button>
-            {uploadMessage && <p className="mt-2 text-sm">{uploadMessage}</p>}
-          </div>
-        )}
-        {/* End CSV Upload Section */}
-
-        <div className="table-wrapper">
-          <h3 className="text-center" style={{ padding: "5px" }}>
-            Data List
-          </h3>
-          {
-            <DataTable
-              columns={columns}
-              data={filteredItems} // Use the filteredItems derived from pdfuser state
-              direction="auto"
-              fixedHeaderScrollHeight="300px"
-              pagination
-              responsive
-              progressPending={pdfuserIsLoading} // Use pdfuserIsLoading for progress pending
-              // conditionalRowStyles={conditionalRowStyles}
-
-              subHeaderAlign="right"
-              subHeaderWrap
-              subHeaderComponent={subHeaderComponentMemo} // Use subHeaderComponentMemo
-              subHeader
-            />
-          }
-        </div>
-      </div>
-
-      {/* <img src='https://drive.google.com/uc?id=111KXF6h1WG_dYzaHHJHXXDpyac4aV8SI' alt='img' crossOrigin='anonymous'/> */}
-    </>
+    <Box sx={{ p: 3 }}>
+      <Paper elevation={2} sx={{ p: 3, mb: 3 }}>
+        <Typography variant="h5" gutterBottom>
+          Employee ID Card Management
+        </Typography>
+        
+        <Grid container spacing={3} sx={{ mb: 3, justifyContent: 'center' }}>
+          <Grid item xs={12} sm={8} md={6} lg={5}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6" gutterBottom align="center">
+                  Upload New Data
+                </Typography>
+                
+                {!passwordCorrect ? (
+                  <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+                    <Button 
+                      variant="contained" 
+                      color="primary"
+                      onClick={handleOpenDialog}
+                    >
+                      Authenticate to Upload
+                    </Button>
+                  </Box>
+                ) : (
+                  <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    <Box sx={{ mb: 2, textAlign: 'center' }}>
+                      <Button
+                        variant="contained"
+                        component="label"
+                        startIcon={<CloudUploadIcon />}
+                        sx={{ mb: 1 }}
+                      >
+                        Select CSV File
+                        <input
+                          type="file"
+                          accept=".csv"
+                          hidden
+                          onChange={handleFileChange}
+                        />
+                      </Button>
+                      {selectedFile && (
+                        <Typography variant="body2">
+                          Selected: {selectedFile.name}
+                        </Typography>
+                      )}
+                    </Box>
+                    
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={handleUpload}
+                      disabled={!selectedFile || uploading}
+                    >
+                      {uploading ? "Uploading..." : "Upload Data"}
+                    </Button>
+                    
+                    {uploadMessage && (
+                      <Typography 
+                        variant="body2" 
+                        color={uploadMessage.includes('successful') ? 'success.main' : 'error.main'}
+                        sx={{ mt: 1 }}
+                      >
+                        {uploadMessage}
+                      </Typography>
+                    )}
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
+        
+        <DataTable
+          title="Employee List"
+          columns={columns}
+          data={filteredItems}
+          pagination
+          paginationResetDefaultPage={resetPaginationToggle}
+          subHeaderComponent={subHeaderComponentMemo}
+          persistTableHead
+          subHeader
+          customStyles={customStyles}
+          highlightOnHover
+          pointerOnHover
+          progressPending={pdfuserIsLoading}
+          progressComponent={<Loader />}
+        />
+      </Paper>
+      
+      {/* Password Dialog */}
+      <Dialog open={openDialog} onClose={handleCloseDialog}>
+        <DialogTitle>Authentication Required</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Please enter the password to access upload functionality.
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            label="Password"
+            type="password"
+            fullWidth
+            variant="outlined"
+            value={password}
+            onChange={handlePasswordChange}
+          />
+          {uploadMessage && uploadMessage !== 'Uploading...' && (
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+              {uploadMessage}
+            </Typography>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog}>Cancel</Button>
+          <Button onClick={handlePasswordSubmitDialog} color="primary">
+            Submit
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 };
 
