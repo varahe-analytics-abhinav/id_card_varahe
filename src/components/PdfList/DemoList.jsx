@@ -38,32 +38,31 @@ const DemoList = () => {
   const fetchPdfItems = async () => {
     setPdfuserIsLoading(true); // Set loading to true before fetching
     try {
-      // Check local storage first
-      const cachedItems = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (cachedItems) {
-        setPdfuser(JSON.parse(cachedItems));
-        setPdfuserIsLoading(false);
-        // Optionally, you might still want to fetch in the background to get the latest data
-        return; // Use cached data and exit
-      }
-
-      // If not in local storage, fetch from API
+      // Always fetch from API first
       const response = await fetch(`${API_HOST_URL}/get-all-items`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
       const data = await response.json();
-
+  
       // Store fetched data in local storage
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data.data));
-
+  
       setPdfuser(data.data);
       setPdfuserIsLoading(false);
     } catch (error) {
       console.error("Error fetching PDF items:", error);
+      
+      // If API fetch fails, try to get data from local storage as fallback
+      const cachedItems = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (cachedItems) {
+        setPdfuser(JSON.parse(cachedItems));
+      } else {
+        // Set pdfuser to an empty array if no cached data
+        setPdfuser([]);
+      }
+      
       setPdfuserIsLoading(false);
-      // Set pdfuser to an empty array in case of error
-      setPdfuser([]);
     }
   };
 
