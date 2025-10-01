@@ -1,0 +1,188 @@
+.witpdf-card {
+  max-width: 100%;
+  background: url("/public/assets/img/WITS\ ID\ Card\ template\ \(1\).jpg") no-repeat center center;
+  margin: auto;
+  background-size: 100% 100%; /* Ensures the image spans the full width and height */
+  height: 1588px;
+  page-break-after: always; /* Ensures a page break after this section */
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.witpdf-card-2 {
+  max-width: 100%;
+  background: url("/public/assets/img/WITS\ ID\ Card\ template\ \(2\).jpg") no-repeat center center;
+  margin: auto;
+  background-size: 100% 100%; /* Ensures the image spans the full width and height */
+  height: 1588px;
+  page-break-before: always; /* Ensures this section starts on a new page */
+}
+
+.title-wit {
+  color: grey;
+  font-size: 18px;
+}
+
+.wit-buttonpdf {
+  border: none;
+  position: fixed;
+  bottom: 0;
+  z-index: 10;
+  height: 60px;
+  outline: 0;
+  text-align: center;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  cursor: pointer;
+  width: 40%;
+  font-size: 18px;
+}
+
+.wit-buttonpdf:hover {
+  opacity: 0.7;
+}
+
+.witpdf-card img {
+  width: 400px;
+  height: 400px;
+  clip-path: polygon(50% 0%, 90% 25%, 100% 70%, 75% 100%, 25% 100%, 0% 70%, 10% 25%);
+}
+
+.wit-imgPdf2 {
+  top: 17%;
+  right: 29.2%;
+  width: 470px;
+  position: absolute;
+  height: 540px;
+  border-radius: 20px;
+  
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  
+}
+
+.wit-imgPdf2 img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Prevents the image from stretching */
+  clip-path: none; 
+}
+
+.namePdf2 {
+  position: absolute;
+  bottom: 25.5%;
+  height: 100px;
+  width: 470px;
+  right: 29%;
+  display: flex;
+  /* border: 2px solid black; */
+  text-align: center;
+  justify-content: center;
+  color: white;
+  align-items: center;
+}
+/* .namePdf h1{
+  font-size:68px;
+
+}
+.namePdf1 h1{
+  font-size:60px;
+
+} */
+.wit-designPdf2 {
+  position: absolute;
+  bottom: 32.2%;
+  height: 200px;
+  font-size: 75px;
+  width: 705px;
+  right: 18%;
+  display: flex;
+  
+  justify-content: center;
+  color: rgb(6, 23, 91);
+  align-items: center;
+}
+.projectPdf2 {
+  position: absolute;
+  top: 77.5%;
+  height: 60px;
+  right: 19%;
+  font-weight: 300;
+  font-size: 45px;
+  width: 680px;
+  /* border: 2px solid rgb(6, 23, 91); */
+  display: flex;
+  justify-content: center;
+ color: rgb(6, 23, 91);
+  align-items: center;
+}
+.projectPdf2 span,.wit-employeidPdf2 span,.wit-bloodidPdf2 span{
+  font-weight: 900;
+}
+.wit-projectPdf2 {
+  position: absolute;
+  top: 77.5%;
+  height: 60px;
+  right: 18%;
+  font-weight: 300;
+  font-size: 45px;
+  width: 380px;
+  display: flex;
+  /* justify-content: center; */
+ color: rgb(6, 23, 91);
+  align-items: center;
+}
+
+.wit-employeidPdf2 {
+  position: absolute;
+  top: 83%;
+  height: 60px;
+  right: 19%;
+  font-weight: 300;
+  /* border: 2px solid rgb(6, 23, 91); */
+  font-size: 45px;
+  width: 680px;
+  display: flex;
+  justify-content: center;
+  color: rgb(6, 23, 91);
+  align-items: center;
+}
+
+.wit-bloodidPdf2 {
+  position: absolute;
+  bottom: 8.2%;
+  height: 60px;
+  right: 18%;
+   font-weight: 300;
+  /* border: 2px solid rgb(6, 23, 91); */
+  font-size: 45px;
+  width: 680px;
+  display: flex;
+  justify-content: center;
+  color: rgb(6, 23, 91);;
+  align-items: center;
+}
+
+@media print {
+  .witpdf-card, .witpdf-card-2 {
+    width: 100%;
+    height: auto;
+    margin: 0;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .wit-buttonpdf {
+    display: none;
+  }
+}
+
+.witpdf-card, .witpdf-card-2 {
+  width: 100%;
+  height: 1588px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: contain; 
+  background-attachment: local; 
+  margin: 0 auto;
+  page-break-after: always; 
+}
+

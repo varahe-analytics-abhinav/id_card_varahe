@@ -71,6 +71,12 @@ export default function Sidenav() {
                   <p>Excel To Pdf</p>
                 </Link>
               </li>
+              <li className="nav-item">
+                <Link to="/wit-pdf" className="nav-link">
+                  <i className="nav-icon fas fa-list-alt" />
+                  <p>W-I-T</p>
+                </Link>
+              </li>
 
               {/* <li className="nav-item">
           <Link to="/stations" className="nav-link">
